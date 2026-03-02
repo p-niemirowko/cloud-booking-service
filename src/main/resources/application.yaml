@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: booking-service
+
+  security:
+    oauth2:
+      client:
+        registration:
+          booking-property-client:
+            provider: auth-service
+            client-id: booking-service
+            client-secret: booking-secret
+            authorization-grant-type: client_credentials
+            scope: property.read
+
+          booking-payment-client:
+            provider: auth-service
+            client-id: booking-service
+            client-secret: booking-secret
+            authorization-grant-type: client_credentials
+            scope: payment.create
+
+        provider:
+          auth-service:
+            token-uri: http://gateway:8080/oauth2/token
+
+      resourceserver:
+        jwt:
+          issuer-uri: http://gateway:8080
+
+  datasource:
+    hikari:
+      initializationFailTimeout: 15000
+    url: jdbc:postgresql://localhost:5432/booking
+    username: booking_user
+    password: booking_pass
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+resilience4j:
+  retry:
+    instances:
+      propertyService:
+        max-attempts: 3
+        wait-duration: 300ms
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - com.yourpackage.DownstreamServiceException
+        ignore-exceptions:
+          - com.yourpackage.PropertyNotFoundException
+
+  circuitbreaker:
+    instances:
+      propertyService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
