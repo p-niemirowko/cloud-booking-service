@@ -13,7 +13,7 @@ public class HttpClientConfig {
     @Bean
     HttpClient reactorHttpClient() {
         return HttpClient.create()
-                .responseTimeout(Duration.ofSeconds(3))
+                .responseTimeout(Duration.ofSeconds(5)) // todo move it to application.yml
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);
     }
 }

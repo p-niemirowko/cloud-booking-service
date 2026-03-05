@@ -1,12 +1,11 @@
 package com.pniemirowko.cloud.booking.infrastructure.web.property.exception;
 
-public class PropertyServiceUnavailableException extends RuntimeException {
+import com.pniemirowko.cloud.booking.infrastructure.web.exception.ServerHttpException;
+import org.springframework.http.HttpStatus;
 
-    public PropertyServiceUnavailableException(String message) {
-        super(message);
-    }
+public class PropertyServiceUnavailableException extends ServerHttpException {
 
-    public PropertyServiceUnavailableException(String message, Throwable ex) {
-        super(message, ex);
+    public PropertyServiceUnavailableException(String message, Throwable cause) {
+        super(HttpStatus.SERVICE_UNAVAILABLE, message, cause);
     }
 }

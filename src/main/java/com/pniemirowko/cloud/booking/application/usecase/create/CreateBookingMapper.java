@@ -8,7 +8,5 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 interface CreateBookingMapper {
 
-    @Mapping(target = "redirectUri", source = "redirectUri")
-    @Mapping(target = "expiredAt", source = "expiredAt")
-    CreateBookingResponse toResponse(Booking booking, String redirectUri, String expiredAt);
+    CreateBookingResponse toResponse(Booking booking);
 }

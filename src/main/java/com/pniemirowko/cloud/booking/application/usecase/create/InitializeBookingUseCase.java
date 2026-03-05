@@ -1,8 +1,10 @@
 package com.pniemirowko.cloud.booking.application.usecase.create;
 
 import com.pniemirowko.cloud.booking.application.port.PropertyClient;
-import com.pniemirowko.cloud.booking.application.usecase.create.command.CreateBookingCommand;
 import com.pniemirowko.cloud.booking.application.port.model.PropertyDetails;
+import com.pniemirowko.cloud.booking.application.usecase.create.command.CreateBookingCommand;
+import com.pniemirowko.cloud.booking.application.usecase.exception.UseCaseError;
+import com.pniemirowko.cloud.booking.application.usecase.exception.UseCaseException;
 import com.pniemirowko.cloud.booking.domain.Booking;
 import com.pniemirowko.cloud.booking.domain.BookingRepository;
 import com.pniemirowko.cloud.booking.domain.StayPeriod;
@@ -23,8 +25,14 @@ class InitializeBookingUseCase {
 
     @Transactional
     Booking execute(CreateBookingCommand command) {
+        checkAvailability(command);
+
         BigDecimal totalPrice = calculateTotalPrice(command.getPropertyId(), command.getFrom(), command.getTo());
 
+        return saveNewBooking(command, totalPrice);
+    }
+
+    private Booking saveNewBooking(CreateBookingCommand command, BigDecimal totalPrice) {
         try {
             Booking booking = Booking.initializeBooking(
                     command.getPropertyId(),
@@ -38,9 +46,14 @@ class InitializeBookingUseCase {
 
             return booking;
         } catch (DataIntegrityViolationException ex) {
-             return bookingRepository.findByIdempotencyKey(command.getIdempotencyKey())
-                     .orElseThrow(() -> new RuntimeException("Unknown exception"));
+            return bookingRepository.findByIdempotencyKey(command.getIdempotencyKey())
+                    .orElseThrow(() -> new UseCaseException(UseCaseError.NOT_FOUND_BY_IDEMPOTENCY_KEY, ex));
         }
+    }
+
+    private void checkAvailability(CreateBookingCommand command) {
+
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     private BigDecimal calculateTotalPrice(String propertyId, LocalDate from, LocalDate to) {

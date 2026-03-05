@@ -47,9 +47,9 @@ resilience4j:
         wait-duration: 300ms
         retry-exceptions:
           - org.springframework.web.reactive.function.client.WebClientRequestException
-          - com.yourpackage.DownstreamServiceException
+          - com.pniemirowko.cloud.booking.infrastructure.web.exception.ServerHttpException
         ignore-exceptions:
-          - com.yourpackage.PropertyNotFoundException
+          - com.pniemirowko.cloud.booking.infrastructure.web.exception.ClientHttpException
 
   circuitbreaker:
     instances:

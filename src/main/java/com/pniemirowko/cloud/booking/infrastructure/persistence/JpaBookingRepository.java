@@ -8,4 +8,5 @@ import java.util.UUID;
 interface JpaBookingRepository extends JpaRepository<BookingEntity, UUID> {
 
     Optional<BookingEntity> findByIdempotencyKey(String idempotencyKey);
+    boolean existsByPropertyIdAndFromBeforeAnd
 }

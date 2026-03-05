@@ -3,7 +3,6 @@ package com.pniemirowko.cloud.booking.domain;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,6 +20,8 @@ public class Booking {
     private LocalDate from;
     private LocalDate to;
     private BookingStatus status;
+    private String paymentRedirectUri;
+    private String paymentExpiredAt;
     private Money totalPrice;
     private String idempotencyKey;
 
@@ -46,11 +47,13 @@ public class Booking {
                 .build();
     }
 
-    public void attachPayment(String paymentId) {
+    public void attachPayment(String paymentId, String expiredAt, String redirectUri) {
         if (status != BookingStatus.INITIALIZED) {
             throw new IllegalArgumentException("Invalid status state");
         }
         this.paymentId = paymentId;
+        this.paymentExpiredAt = expiredAt;
+        this.paymentRedirectUri = redirectUri;
         this.status = BookingStatus.PENDING;
     }
 }

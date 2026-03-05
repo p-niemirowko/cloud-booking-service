@@ -5,6 +5,7 @@ import com.pniemirowko.cloud.booking.domain.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,5 +31,11 @@ class BookingRepositoryImpl implements BookingRepository {
     public Optional<Booking> findByIdempotencyKey(String idempotencyKey) {
         return jpaRepository.findByIdempotencyKey(idempotencyKey)
                 .map(mapper::toDomain);
+    }
+
+    @Override
+    public boolean isAvailable(String propertyId, LocalDate from, LocalDate to) {
+
+        return false;
     }
 }

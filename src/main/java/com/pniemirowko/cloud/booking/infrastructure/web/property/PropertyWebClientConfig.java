@@ -1,7 +1,8 @@
 package com.pniemirowko.cloud.booking.infrastructure.web.property;
 
+import com.pniemirowko.cloud.booking.infrastructure.web.property.exception.PropertyClientHttpException;
 import com.pniemirowko.cloud.booking.infrastructure.web.property.exception.PropertyNotFoundException;
-import com.pniemirowko.cloud.booking.infrastructure.web.property.exception.PropertyServiceHttpException;
+import com.pniemirowko.cloud.booking.infrastructure.web.property.exception.PropertyServerHttpException;
 import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,8 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
+
+import java.time.Duration;
 
 @Configuration
 public class PropertyWebClientConfig {
@@ -44,12 +47,12 @@ public class PropertyWebClientConfig {
                     return Mono.error(new PropertyNotFoundException("Property not found"));
                     // todo add others statues
                 }
-                return Mono.error(new PropertyServiceHttpException(HttpStatus.valueOf(statusCode), "Client error"));
+                return Mono.error(new PropertyClientHttpException(HttpStatus.valueOf(statusCode), "Client error"));
             }
 
             if (response.statusCode().is5xxServerError()) {
                 int statusCode = response.statusCode().value();
-                return Mono.error(new PropertyServiceHttpException(HttpStatus.valueOf(statusCode), "Property service unavailable"));
+                return Mono.error(new PropertyServerHttpException(HttpStatus.valueOf(statusCode), "Property service unavailable"));
             }
 
             return Mono.just(response);
