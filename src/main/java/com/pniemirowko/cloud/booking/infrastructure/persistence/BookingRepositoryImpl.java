@@ -34,8 +34,7 @@ class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public boolean isAvailable(String propertyId, LocalDate from, LocalDate to) {
-
-        return false;
+    public boolean existsOverlappingBooking(UUID propertyId, LocalDate from, LocalDate to) {
+        return jpaRepository.existsOverlappingBooking(propertyId, from, to);
     }
 }

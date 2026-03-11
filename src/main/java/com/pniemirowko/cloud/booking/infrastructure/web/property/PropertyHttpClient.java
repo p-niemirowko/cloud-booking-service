@@ -1,6 +1,6 @@
 package com.pniemirowko.cloud.booking.infrastructure.web.property;
 
-import com.pniemirowko.cloud.booking.application.port.model.PropertyDetails;
+import com.pniemirowko.cloud.booking.application.client.model.GetPropertyDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
@@ -9,5 +9,5 @@ import org.springframework.web.service.annotation.HttpExchange;
 interface PropertyHttpClient {
 
     @GetExchange("/{propertyId}")
-    PropertyDetails getPropertyDetails(@PathVariable String propertyId);
+    GetPropertyDetails getPropertyDetails(@PathVariable String propertyId);
 }

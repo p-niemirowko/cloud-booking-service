@@ -1,9 +1,8 @@
-package com.pniemirowko.cloud.booking.infrastructure.web.property;
+package com.pniemirowko.cloud.booking.infrastructure.web.payment;
 
 import com.pniemirowko.cloud.booking.infrastructure.web.RemoteService;
 import com.pniemirowko.cloud.booking.infrastructure.web.exception.RemoteServiceException;
 import org.slf4j.MDC;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -16,18 +15,17 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-public class PropertyWebClientConfig {
+public class PaymentWebClientConfig {
 
-    @Bean
     WebClient propertyWebClient(
             OAuth2AuthorizedClientManager manager,
             HttpClient httpClient) {
 
         var oauth = new ServletOAuth2AuthorizedClientExchangeFilterFunction(manager);
-        oauth.setDefaultClientRegistrationId("booking-property-client");
+        oauth.setDefaultClientRegistrationId("booking-payment-client");
 
         return WebClient.builder()
-                .baseUrl("http://property-service") // todo dodac do zmiennych
+                .baseUrl("http://payment-service") // todo dodac do zmiennych
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .apply(oauth.oauth2Configuration())
                 .filter(errorMappingFilter())
@@ -40,25 +38,18 @@ public class PropertyWebClientConfig {
 
             if (response.statusCode().is4xxClientError()) {
                 int statusCode = response.statusCode().value();
-                if (statusCode == 404) {
-                    return Mono.error(new RemoteServiceException(
-                            RemoteService.PROPERTY,
-                            HttpStatus.NOT_FOUND,
-                            "Property not found"));
-                    // todo add others statues
-                }
                 return Mono.error(new RemoteServiceException(
-                        RemoteService.PROPERTY,
+                        RemoteService.PAYMENT,
                         HttpStatus.valueOf(statusCode),
-                        "Property client error"));
+                        "Payment client error"));
             }
 
             if (response.statusCode().is5xxServerError()) {
                 int statusCode = response.statusCode().value();
                 return Mono.error(new RemoteServiceException(
-                        RemoteService.PROPERTY,
+                        RemoteService.PAYMENT,
                         HttpStatus.valueOf(statusCode),
-                        "Property service unavailable"));
+                        "Payment service unavailable"));
             }
 
             return Mono.just(response);
@@ -77,6 +68,4 @@ public class PropertyWebClientConfig {
             return next.exchange(newRequest);
         };
     }
-
-
 }

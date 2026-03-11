@@ -1,4 +1,4 @@
-package com.pniemirowko.cloud.booking.api.exception;
+package com.pniemirowko.cloud.booking.api.client.dto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.pniemirowko.cloud.booking.application.port.model;
+package com.pniemirowko.cloud.booking.application.client.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class PropertyDetails {
+public class GetPropertyDetails {
 
     String propertyId;
     BigDecimal price;

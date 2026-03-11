@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -14,36 +15,34 @@ public class Booking {
 
     private UUID id;
 
-    private String ownerId;
-    private String propertyId;
-    private String paymentId;
+    private UUID ownerId;
+    private UUID propertyId;
+    private UUID paymentId;
     private LocalDate from;
     private LocalDate to;
     private BookingStatus status;
     private String paymentRedirectUri;
     private String paymentExpiredAt;
-    private Money totalPrice;
-    private String idempotencyKey;
+    private BigDecimal totalPrice;
+    private String currency;
+    private LocalDateTime expiredAt;
 
-    public static Booking initializeBooking(String propertyId,
+    public static Booking initializeBooking(UUID propertyId,
                                             LocalDate from,
                                             LocalDate to,
                                             BigDecimal totalPrice,
-                                            String ownerId,
-                                            String idempotencyKey) {
+                                            UUID ownerId) {
 
         return Booking.builder()
                 .id(UUID.randomUUID())
                 .propertyId(propertyId)
                 .from(from)
                 .to(to)
-                .totalPrice(Money.builder()
-                        .amount(totalPrice)
-                        .currency("PLN")
-                        .build())
+                .totalPrice(totalPrice)
+                .currency("PLN")
                 .status(BookingStatus.INITIALIZED)
                 .ownerId(ownerId)
-                .idempotencyKey(idempotencyKey)
+                .expiredAt(LocalDateTime.now().plusMinutes(20)) // todo change it to configuration
                 .build();
     }
 
@@ -51,7 +50,7 @@ public class Booking {
         if (status != BookingStatus.INITIALIZED) {
             throw new IllegalArgumentException("Invalid status state");
         }
-        this.paymentId = paymentId;
+        this.paymentId = UUID.fromString(paymentId);
         this.paymentExpiredAt = expiredAt;
         this.paymentRedirectUri = redirectUri;
         this.status = BookingStatus.PENDING;

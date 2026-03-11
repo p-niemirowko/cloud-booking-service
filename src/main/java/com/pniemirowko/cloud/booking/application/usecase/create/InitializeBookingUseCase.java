@@ -1,10 +1,10 @@
 package com.pniemirowko.cloud.booking.application.usecase.create;
 
-import com.pniemirowko.cloud.booking.application.port.PropertyClient;
-import com.pniemirowko.cloud.booking.application.port.model.PropertyDetails;
+import com.pniemirowko.cloud.booking.application.client.PropertyClient;
+import com.pniemirowko.cloud.booking.application.client.model.GetPropertyDetails;
 import com.pniemirowko.cloud.booking.application.usecase.create.command.CreateBookingCommand;
-import com.pniemirowko.cloud.booking.application.usecase.exception.UseCaseError;
-import com.pniemirowko.cloud.booking.application.usecase.exception.UseCaseException;
+import com.pniemirowko.cloud.booking.application.exception.UseCaseError;
+import com.pniemirowko.cloud.booking.application.exception.UseCaseException;
 import com.pniemirowko.cloud.booking.domain.Booking;
 import com.pniemirowko.cloud.booking.domain.BookingRepository;
 import com.pniemirowko.cloud.booking.domain.StayPeriod;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +40,7 @@ class InitializeBookingUseCase {
                     command.getFrom(),
                     command.getTo(),
                     totalPrice,
-                    command.getOwnerId(),
-                    command.getIdempotencyKey());
+                    command.getOwnerId());
 
             bookingRepository.save(booking);
 
@@ -52,12 +52,15 @@ class InitializeBookingUseCase {
     }
 
     private void checkAvailability(CreateBookingCommand command) {
+        boolean existsOverlap = bookingRepository.existsOverlappingBooking(command.getPropertyId(), command.getFrom(), command.getTo());
 
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (existsOverlap) {
+            throw new UseCaseException(UseCaseError.PROPERTY_NOT_AVAILABLE);
+        }
     }
 
-    private BigDecimal calculateTotalPrice(String propertyId, LocalDate from, LocalDate to) {
-        PropertyDetails propertyDetails = propertyClient.getPropertyDetails(propertyId);
+    private BigDecimal calculateTotalPrice(UUID propertyId, LocalDate from, LocalDate to) {
+        GetPropertyDetails propertyDetails = propertyClient.getPropertyDetails(propertyId.toString());
 
         long nights = new StayPeriod(from, to).nights();
 

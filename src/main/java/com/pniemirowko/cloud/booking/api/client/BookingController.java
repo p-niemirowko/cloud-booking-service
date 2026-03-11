@@ -22,15 +22,14 @@ class BookingController {
     public ResponseEntity<?> getBookingDetails(@PathVariable String bookingId, String ownerId) {
         log.info("Getting details about booking with id {}", bookingId);
 
-        return ResponseEntity.of(bookingFacade.getBookingDetails(bookingId, ownerId));
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @GetMapping("/my")
     public ResponseEntity<?> getMyBookings(Jwt jwt) {
-        return ResponseEntity.ok(bookingFacade.getMyBookings(jwt.getClaimAsString("userId")));
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    // todo add exception handler for http properties and payments
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody PostBookingRequest request,
                                            @RequestHeader("Idempotency-key") String idempotencyKey,
@@ -40,7 +39,7 @@ class BookingController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(create.execute(bookingHttpMapper.toCommand(request, userId)));
+                .body(create.execute(bookingHttpMapper.toCommand(request, userId, idempotencyKey)));
     }
 
     @PostMapping("/{bookingId}/cancel")
@@ -48,7 +47,7 @@ class BookingController {
         String userId = jwt.getClaimAsString("userId");
         log.info("Delete booking with id {} for user {}", bookingId, userId);
 
-        bookingFacade.cancelBooking(bookingId, userId);
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
 }

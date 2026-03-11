@@ -12,5 +12,5 @@ public interface BookingRepository {
 
     Optional<Booking> findByIdempotencyKey(String idempotencyKey);
 
-    boolean isAvailable(String propertyId, LocalDate from, LocalDate to);
+    boolean existsOverlappingBooking(UUID propertyId, LocalDate from, LocalDate to);
 }

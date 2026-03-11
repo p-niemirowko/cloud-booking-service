@@ -4,13 +4,14 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder
 public class CreateBookingCommand {
 
-    String propertyId;
-    String ownerId;
+    UUID propertyId;
+    UUID ownerId;
     LocalDate from;
     LocalDate to;
     String idempotencyKey;

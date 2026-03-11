@@ -9,6 +9,6 @@ import org.mapstruct.Mapping;
 interface BookingHttpMapper {
 
     @Mapping(target = "ownerId", source = "ownerId")
-    CreateBookingCommand toCommand(PostBookingRequest request, String ownerId);
+    CreateBookingCommand toCommand(PostBookingRequest request, String ownerId, String idempotencyKey);
 
 }
